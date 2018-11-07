@@ -1,31 +1,39 @@
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *  This class is the main class of the "World of Zuul" application.
- *  "World of Zuul" is a very simple, text based adventure game.  Users
- *  can walk around some scenery. That's all. It should really be extended
- *  to make it more interesting!
+ * This class is the main class of the "World of Zuul" application. "World of
+ * Zuul" is a very simple, text based adventure game. Users can walk around some
+ * scenery. That's all. It should really be extended to make it more
+ * interesting!
  *
- *  To play this game, create an instance of this class and call the "play"
- *  method.
+ * To play this game, create an instance of this class and call the "play"
+ * method.
  *
- *  This main class creates and initialises all the others: it creates all
- *  rooms, creates the parser and starts the game.  It also evaluates and
- *  executes the commands that the parser returns.
+ * This main class creates and initialises all the others: it creates all rooms,
+ * creates the parser and starts the game. It also evaluates and executes the
+ * commands that the parser returns.
  *
- * @author  Michael Kölling and David J. Barnes
+ * @author Michael Kölling and David J. Barnes
  * @version 2011.07.31
  */
 public class Game {
 
     private Parser parser;
-    private Room currentRoom;
+    private Room currentRoom, previusRoom;
+    private int roomsEntert;
+    private List<Room> roomHistory;
+    private final String seprationLine = "--------------------------------------------------------------------";
 
     /**
      * Create the game and initialise its internal map.
      */
     public Game() {
+        roomHistory = new ArrayList<>();
         createRooms();
         parser = new Parser();
+        roomsEntert = 0;
     }
 
     /**
@@ -34,34 +42,48 @@ public class Game {
     private void createRooms() {
         Room entry, freskoChamber, aetherOrgan, downTheHole, relicOfTheFallen, poolRoom, storeRoom, eggRoom, statueRoom;
 
-        //creates the room
-        entry = new Room("door");
-        freskoChamber = new Room("the fresko champer");
-        downTheHole = new Room(" down the hole");
-        aetherOrgan = new Room("aether organ");
-        relicOfTheFallen = new Room("Relic of the Fallen");
-        poolRoom = new Room("The Pool Room");
-        storeRoom = new Room("The Store Room");
-        eggRoom = new Room("The Egg Room");
-        statueRoom = new Room("The Statue Room");
+        // Initialise
+        RoomDesciption roomDesciptions = new RoomDesciption();
+        ItemDesciption itemDesriptions = new ItemDesciption();
+
+        // creates the room 
+        // adding new rooms should be acompanied by a "Room Desciption Method" in the RoomDesciption Class 
+        entry = new Room(roomDesciptions.roomDesiptionEntry());
+        freskoChamber = new Room(roomDesciptions.roomDesiptionFresko());
+        downTheHole = new Room(roomDesciptions.roomDesiptionHole());
+        aetherOrgan = new Room(roomDesciptions.roomDesiptionAether());
+        relicOfTheFallen = new Room(roomDesciptions.roomDesiptionRelic());
+        poolRoom = new Room(roomDesciptions.roomDesiptionPool());
+        storeRoom = new Room(roomDesciptions.roomDesiptionStore());
+        eggRoom = new Room(roomDesciptions.roomDesiptionEgg());
+        statueRoom = new Room(roomDesciptions.roomDesiptionStatue());
+
+        // creates Items 
+        // adding new item should be acompanied by a "Item Desciption Method" in the RoomDesciption Class
+        Item dustBucket = new Item("Dust Bucket", "Its a Bucket, just a bucket", 1);
+
+        // adds items to rooms
+        entry.addItem(dustBucket);
 
         // initialise room exits
         entry.setExit("decend", freskoChamber);
-        freskoChamber.setExit("Straight", aetherOrgan);
-        freskoChamber.setExit("left", relicOfTheFallen);
+        freskoChamber.setExit("north", aetherOrgan);
+        freskoChamber.setExit("west", relicOfTheFallen);
         aetherOrgan.setExit("down", downTheHole);
-        aetherOrgan.setExit("back", freskoChamber);
+        aetherOrgan.setExit("south", freskoChamber);
         downTheHole.setExit("up", aetherOrgan);
-        relicOfTheFallen.setExit("right", poolRoom);
-        relicOfTheFallen.setExit("back", freskoChamber);
-        poolRoom.setExit("straight", eggRoom);
-        poolRoom.setExit("left", storeRoom);
-        poolRoom.setExit("back", relicOfTheFallen);
-        storeRoom.setExit("back", poolRoom);
-        eggRoom.setExit("left", statueRoom);
-        eggRoom.setExit("back", poolRoom);
+        relicOfTheFallen.setExit("north", poolRoom);
+        relicOfTheFallen.setExit("east", freskoChamber);
+        poolRoom.setExit("north", eggRoom);
+        poolRoom.setExit("west", storeRoom);
+        poolRoom.setExit("south", relicOfTheFallen);
+        storeRoom.setExit("north", poolRoom);
+        eggRoom.setExit("west", statueRoom);
+        eggRoom.setExit("south", poolRoom);
 
-        currentRoom = entry;  // start game outside
+//        changeRoom(entry);
+        currentRoom = entry; // starting room
+        roomHistory.add(currentRoom);
     }
 
     /**
@@ -88,7 +110,9 @@ public class Game {
         System.out.println("Welcome to the World of Zuul!");
         System.out.println("World of Zuul is a new, incredibly boring adventure game.");
         System.out.println("Type 'help' if you need help.");
+        System.out.println(seprationLine);
         System.out.println(currentRoom.getDescription());
+        System.out.println("");
         System.out.println(currentRoom.getExitString());
     }
 
@@ -113,6 +137,12 @@ public class Game {
             goRoom(command);
         } else if (commandWord.equals("look")) {
             look();
+        } else if (commandWord.equals("eat")) {
+            System.out.println("You have eaten, and are no longer hungry");
+        } else if (commandWord.equals("back")) {
+            back();
+        } else if (commandWord.equals("retrace")) {
+            retrace();
         } else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
         }
@@ -127,8 +157,7 @@ public class Game {
     private void printHelp() {
         System.out.println();
         System.out.println("Your command words are:");
-        System.out.println("Your command words are:");
-        parser.showCommands();
+        System.out.println(parser.showCommands());
     }
 
     /**
@@ -147,21 +176,63 @@ public class Game {
         // Try to leave current room.
         Room nextRoom = currentRoom.getExit(direction);
 
+        System.out.println("");
         if (nextRoom == null) {
             System.out.println("There is no door!");
         } else {
-            currentRoom = nextRoom;
-            System.out.println(currentRoom.getDescription());
-            System.out.println(currentRoom.getExitString());
-
+            changeRoom(nextRoom);
         }
     }
 
     /**
+     * changes the room and handels alle the process that are desessery for
+     * every thing run properbly sets the room at the start;
      *
+     * @param nextRoom
+     */
+    private void changeRoom(Room nextRoom) {
+        previusRoom = currentRoom;
+        currentRoom = nextRoom;
+        countRooms();
+        roomHistory.add(nextRoom);
+        System.out.println(seprationLine);
+        System.out.println(currentRoom.getDescription());
+        System.out.println("");
+        System.out.println(currentRoom.getExitString());
+    }
+
+    /**
+     * you get the description
      */
     private void look() {
+        System.out.println(seprationLine);
         System.out.println(currentRoom.getLongDescription());
+    }
+
+    /**
+     * you enter the previous room
+     */
+    private void back() {
+        System.out.println();
+        if (previusRoom == null) {
+            System.out.println("You cannot go back");
+        } else {
+            System.out.println("You go back");
+            changeRoom(previusRoom);
+        }
+    }
+
+    /**
+     * retraces you steps through the rooms
+     */
+    private void retrace() {
+        if (roomsEntert == 0) {
+            System.out.println("You are at the Start of you journy");
+        } else {
+            changeRoom(roomHistory.get(roomsEntert - 1));
+            roomHistory.remove(roomHistory.get(roomsEntert));
+            roomsEntert = roomsEntert - 2; // -2 because changeroom ads 1 to roomsEntert  an we want to counter that when we retrace
+        }
     }
 
     /**
@@ -177,5 +248,12 @@ public class Game {
         } else {
             return true;  // signal that we want to quit
         }
+    }
+
+    /**
+     * counts how many rooms you have entert
+     */
+    private void countRooms() {
+        roomsEntert++;
     }
 }

@@ -20,9 +20,10 @@ import java.util.Set;
  */
 public class Room {
 
-    private String description, exitList2; //brug denne sammen med setExit hvis det ikke fungere og ikkke bliver ændret
+    private String description;
 //    private Room northExit, southExit, eastExit, estExit, westExit, upExit, downExit;
     private HashMap<String, Room> exits;
+    private List<Item> itemsInRoom;
 
     /**
      * Create a room described "description". Initially, it has no exits.
@@ -33,6 +34,11 @@ public class Room {
     public Room(String description) {
         this.description = description;
         exits = new HashMap<String, Room>();
+        itemsInRoom = new ArrayList<>();
+    }
+
+    public void addItem(Item item) {
+        itemsInRoom.add(item);
     }
 
     /**
@@ -85,7 +91,18 @@ public class Room {
      * @return A description of the room, including exits.
      */
     public String getLongDescription() {
-        return "You are " + description + ".\n" + getExitString();
+        String roomItemsDesciption = "";
+
+        for (int i = 0; i < itemsInRoom.size(); i++) {
+            if (i >= 0) {
+                roomItemsDesciption = "You see " + itemsInRoom.get(i).getItemDesciption() + "\n";
+            }
+            else {
+                roomItemsDesciption = "you also see " + itemsInRoom.get(i).getItemDesciption() + "\n";
+            }
+        }
+        return "You " + description + "´\n" + "\n" + roomItemsDesciption + "\n" + getExitString();
+
     }
 
 }
