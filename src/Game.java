@@ -21,22 +21,17 @@ import java.util.List;
 public class Game {
 
     private Parser parser;
-    private Room currentRoom, previusRoom;
-    private int roomsEntert;
-    private List<Room> roomHistory;
     private Player player1, currentplayer;
-    private final String seprationLine = "--------------------------------------------------------------------";
+    public final String seprationLine = "--------------------------------------------------------------------";
 
     /**
      * Create the game and initialise its internal map.
      */
     public Game() {
-        roomHistory = new ArrayList<>();
-        createRooms();
-        parser = new Parser();
-        roomsEntert = 0;
         player1 = new Player();
         currentplayer = player1;
+        createRooms();
+        parser = new Parser();
     }
 
     /**
@@ -84,9 +79,8 @@ public class Game {
         eggRoom.setExit("west", statueRoom);
         eggRoom.setExit("south", poolRoom);
 
-//        changeRoom(entry);
-        currentRoom = entry; // starting room
-        roomHistory.add(currentRoom);
+        currentplayer.setCurrentRoom(entry);// starting room
+
     }
 
     /**
@@ -114,9 +108,9 @@ public class Game {
         System.out.println("World of Zuul is a new, incredibly boring adventure game.");
         System.out.println("Type 'help' if you need help.");
         System.out.println(seprationLine);
-        System.out.println(currentRoom.getDescription());
+        System.out.println(currentplayer.getCurrentRoom().getDescription());
         System.out.println("");
-        System.out.println(currentRoom.getExitString());
+        System.out.println(currentplayer.getCurrentRoom().getExitString());
     }
 
     /**
@@ -143,9 +137,9 @@ public class Game {
         } else if (commandWord.equals("eat")) {
             System.out.println("You have eaten, and are no longer hungry");
         } else if (commandWord.equals("back")) {
-            back();
+            currentplayer.back();
         } else if (commandWord.equals("retrace")) {
-            retrace();
+            currentplayer.retrace();
         } else if (commandWord.equals("pickup")) {
             pickUp(command);
         } else if (commandWord.equals("drop")) {
@@ -183,13 +177,14 @@ public class Game {
         String direction = command.getSecondWord();
 
         // Try to leave current room.
-        Room nextRoom = currentRoom.getExit(direction);
-
+        Room nextRoom = currentplayer.getCurrentRoom().getExit(direction);
         System.out.println("");
         if (nextRoom == null) {
             System.out.println("There is no door!");
         } else {
-            changeRoom(nextRoom);
+            currentplayer.changeRoom(nextRoom);
+            currentplayer.addToRoomHistory(currentplayer.getPreviusRoom());
+            currentplayer.countRoomsEntertUp();
         }
     }
 
@@ -198,33 +193,7 @@ public class Game {
      */
     private void look() {
         System.out.println(seprationLine);
-        System.out.println(currentRoom.getLongDescription());
-    }
-
-    /**
-     * you enter the previous room
-     */
-    private void back() {
-        System.out.println();
-        if (previusRoom == null) {
-            System.out.println("You cannot go back");
-        } else {
-            System.out.println("You go back");
-            changeRoom(previusRoom);
-        }
-    }
-
-    /**
-     * retraces you steps through the rooms
-     */
-    private void retrace() {
-        if (roomsEntert == 0) {
-            System.out.println("You are at the Start of you journy");
-        } else {
-            changeRoom(roomHistory.get(roomsEntert - 1));
-            roomHistory.remove(roomHistory.get(roomsEntert));
-            roomsEntert = roomsEntert - 2; // -2 because changeroom ads 1 to roomsEntert  an we want to counter that when we retrace
-        }
+        System.out.println(currentplayer.getCurrentRoom().getLongDescription());
     }
 
     /**
@@ -240,12 +209,12 @@ public class Game {
             return;
         }
         List<Item> items = new ArrayList<>();
-        items = currentRoom.getAllItems();
+        items = currentplayer.getCurrentRoom().getAllItems();
         String itemName = command.getSecondWord().toLowerCase();
         for (Item item : items) {
             if (item.getName().toLowerCase().contains(itemName) && item.canBePickedUp()) {
                 player1.pickUpItem(item);
-                currentRoom.getAllItems().remove(item);
+                currentplayer.getCurrentRoom().getAllItems().remove(item);
                 System.out.println("");
                 System.out.println("You picked up " + item.getName());
                 return;
@@ -276,14 +245,14 @@ public class Game {
         for (Item item : items) {
             if (item.getName().toLowerCase().contains(itemName) && item.canBePickedUp()) {
                 player1.drop(item);
-                currentRoom.getAllItems().add(item);
+                currentplayer.getCurrentRoom().getAllItems().add(item);
                 System.out.println("");
                 System.out.println("You dropped " + item.getName());
                 return;
             }
         }
         System.out.println("You do not have that item");
-        
+
     }
 
     /**
@@ -317,30 +286,4 @@ public class Game {
         }
     }
 
-    //implementation of internal methods
-    /**
-     * counts how many rooms you have entert
-     */
-    private void countRooms() {
-        roomsEntert++;
-    }
-
-    /**
-     * changes the room and handels alle the process that are desessery for
-     * every thing run properbly sets the room at the start;
-     *
-     * @param nextRoom
-     */
-    private void changeRoom(Room nextRoom) {
-        previusRoom = currentRoom;
-        currentRoom = nextRoom;
-        countRooms();
-        roomHistory.add(nextRoom);
-        System.out.println(seprationLine);
-        System.out.println(currentRoom.getDescription());
-        System.out.println("");
-        System.out.println(currentRoom.getExitString());
-    }
-    
-    
 }

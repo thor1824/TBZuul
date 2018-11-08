@@ -18,9 +18,9 @@ public class Player {
     private Room currentRoom, previusRoom;
     //private double weight;
     private int hunger, roomsEntert;
-    
+
     /**
-     * 
+     *
      */
     public Player(/*double weight*/) {
         inventory = new ArrayList<>();
@@ -29,12 +29,9 @@ public class Player {
         roomHistory = new ArrayList<>();
     }
 
+    // Getter and Setter
     public List<Room> getRoomHistory() {
         return roomHistory;
-    }
-
-    public void setRoomHistory(List<Room> roomHistory) {
-        this.roomHistory = roomHistory;
     }
 
     public Room getPreviusRoom() {
@@ -52,7 +49,7 @@ public class Player {
     public void setRoomsEntert(int roomsEntert) {
         this.roomsEntert = roomsEntert;
     }
-    
+
     /**
      * Get the value of currentRoom
      *
@@ -71,8 +68,6 @@ public class Player {
         this.currentRoom = currentRoom;
     }
 
-    
-
     public List<Item> getInventory() {
         return inventory;
     }
@@ -81,19 +76,74 @@ public class Player {
         return hunger;
     }
 
+    // Methods for room change
+    public void addToRoomHistory(Room room) {
+        roomHistory.add(room);
+    }
+
+    /**
+     * counts how many rooms you have entert
+     */
+    public void countRoomsEntertUp() {
+        roomsEntert++;
+
+    }
+
+    /**
+     * currentplayer.getCurrentRoom() changes the room and handels alle the
+     * process that are desessery for every thing run properbly sets the room at
+     * the start;
+     *
+     * @param nextRoom
+     */
+    public void changeRoom(Room nextRoom) {
+        previusRoom = currentRoom;
+        currentRoom = nextRoom;
+        System.out.println("--------------------------------------------------------------------");
+        System.out.println(currentRoom.getDescription());
+        System.out.println("");
+        System.out.println(currentRoom.getExitString());
+
+    }
+
+    public void retrace() {
+        if (roomsEntert == 0) {
+            System.out.println("You are at the Start of you journy");
+        } else {
+            changeRoom(roomHistory.get(roomsEntert - 1));
+            roomHistory.remove(roomsEntert - 1);
+            roomsEntert = roomsEntert - 1; // -2 because changeroom ads 1 to roomsEntert  an we want to counter that when we retrace
+        }
+    }
+
+    public void back() {
+        System.out.println();
+        if (previusRoom == null) {
+            System.out.println("You cannot go back");
+        } else {
+            System.out.println("You go back");
+            changeRoom(previusRoom);
+            addToRoomHistory(previusRoom);
+            countRoomsEntertUp();
+        }
+    }
+
+    // methods for inventory add and removind
     /**
      * adds an item to inventory
      *
-     * @param i
+     * @param item
      */
-    public void pickUpItem(Item i) {
-        inventory.add(i);
+    public void pickUpItem(Item item) {
+        inventory.add(item);
     }
 
     /**
      * removes an item from inventory
+     * @param item
      */
-    public void drop(Item i) {
-        inventory.remove(i);
+    public void drop(Item item) {
+        inventory.remove(item);
     }
+
 }
