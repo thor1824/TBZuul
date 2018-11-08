@@ -21,10 +21,10 @@ import java.util.Set;
 public class Room {
 
     private String description;
-//    private Room northExit, southExit, eastExit, estExit, westExit, upExit, downExit;
     private HashMap<String, Room> exits;
     private List<Item> itemsInRoom;
-
+    private Room currentRoom;
+    
     /**
      * Create a room described "description". Initially, it has no exits.
      * "description" is something like "a kitchen" or "an open court yard".

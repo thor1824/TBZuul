@@ -24,7 +24,7 @@ public class Game {
     private Room currentRoom, previusRoom;
     private int roomsEntert;
     private List<Room> roomHistory;
-    private Player player;
+    private Player player1, currentplayer;
     private final String seprationLine = "--------------------------------------------------------------------";
 
     /**
@@ -35,7 +35,8 @@ public class Game {
         createRooms();
         parser = new Parser();
         roomsEntert = 0;
-        player = new Player();
+        player1 = new Player();
+        currentplayer = player1;
     }
 
     /**
@@ -105,7 +106,7 @@ public class Game {
     }
 
     /**
-     * Print out the opening message for the player.
+     * Print out the opening message for the player1.
      */
     private void printWelcome() {
         System.out.println();
@@ -243,11 +244,13 @@ public class Game {
         String itemName = command.getSecondWord().toLowerCase();
         for (Item item : items) {
             if (item.getName().toLowerCase().contains(itemName) && item.canBePickedUp()) {
-                player.pickUpItem(item);
+                player1.pickUpItem(item);
                 currentRoom.getAllItems().remove(item);
+                System.out.println("");
                 System.out.println("You picked up " + item.getName());
                 return;
             } else if (item.getName().contains(itemName) && !item.canBePickedUp()) {
+                System.out.println("");
                 System.out.println("Too large to pick up");
                 return;
             }
@@ -268,12 +271,13 @@ public class Game {
             return;
         }
         List<Item> items = new ArrayList<>();
-        items = player.getInventory();
+        items = player1.getInventory();
         String itemName = command.getSecondWord().toLowerCase();
         for (Item item : items) {
             if (item.getName().toLowerCase().contains(itemName) && item.canBePickedUp()) {
-                player.drop(item);
+                player1.drop(item);
                 currentRoom.getAllItems().add(item);
+                System.out.println("");
                 System.out.println("You dropped " + item.getName());
                 return;
             }
@@ -286,13 +290,14 @@ public class Game {
      * tries to prints out inventory if it contains any thing
      */
     private void showInventory() {
-        if (player.getInventory() != null) {
+        if (player1.getInventory() != null) {
             System.out.println("");
             System.out.println("your inventory contain:");
-            for (Item item : player.getInventory()) {
+            for (Item item : player1.getInventory()) {
                 System.out.println(item.getName());
             }
         } else {
+            System.out.println("");
             System.out.println("you a not carring any thing");
         }
     }
@@ -336,4 +341,6 @@ public class Game {
         System.out.println("");
         System.out.println(currentRoom.getExitString());
     }
+    
+    
 }
