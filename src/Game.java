@@ -147,51 +147,14 @@ public class Game {
             retrace();
         } else if (commandWord.equals("pickup")) {
             pickUp(command);
+        } else if (commandWord.equals("drop")) {
+            drop(command);
         } else if (commandWord.equals("inventory")) {
             showInventory();
         } else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
         }
         return wantToQuit;
-    }
-
-    /**
-     * picks up item and removes it from the "room item list"
-     *
-     * @param command
-     */
-    private void pickUp(Command command) {
-
-        if (!command.hasSecondWord()) {
-            // if there is no second word, we don't know where to go...
-            System.out.println("Pickup What?");
-            return;
-        }
-        List<Item> items = new ArrayList<>();
-        items = currentRoom.getAllItems();
-        String itemName = command.getSecondWord().toLowerCase();
-        for (Item item : items) {
-            if (item.getName().toLowerCase().contains(itemName) && item.canBePickedUp()) {
-                player.pickUpItem(item);
-                currentRoom.getAllItems().remove(item);
-                System.out.println("You picked up " + item.getName());
-                return;
-            } else if (item.getName().contains(itemName) && !item.canBePickedUp()) {
-                System.out.println("Too large to pick up");
-                return;
-            }
-        }
-        System.out.println("you cannot pick that up");
-    }
-
-    private void showInventory() {
-        if (player.getInventory() != null) {
-            System.out.println("");
-            System.out.println("your inventory contain:");
-            for (Item item : player.getInventory()) {
-                System.out.println(item.getName());
-            }
-        }
     }
 
     // implementations of user commands:
@@ -230,23 +193,6 @@ public class Game {
     }
 
     /**
-     * changes the room and handels alle the process that are desessery for
-     * every thing run properbly sets the room at the start;
-     *
-     * @param nextRoom
-     */
-    private void changeRoom(Room nextRoom) {
-        previusRoom = currentRoom;
-        currentRoom = nextRoom;
-        countRooms();
-        roomHistory.add(nextRoom);
-        System.out.println(seprationLine);
-        System.out.println(currentRoom.getDescription());
-        System.out.println("");
-        System.out.println(currentRoom.getExitString());
-    }
-
-    /**
      * you get the description
      */
     private void look() {
@@ -281,6 +227,77 @@ public class Game {
     }
 
     /**
+     * picks up item and removes it from the "room item list"
+     *
+     * @param command
+     */
+    private void pickUp(Command command) {
+
+        if (!command.hasSecondWord()) {
+            // if there is no second word, we don't know where to go...
+            System.out.println("Pickup What?");
+            return;
+        }
+        List<Item> items = new ArrayList<>();
+        items = currentRoom.getAllItems();
+        String itemName = command.getSecondWord().toLowerCase();
+        for (Item item : items) {
+            if (item.getName().toLowerCase().contains(itemName) && item.canBePickedUp()) {
+                player.pickUpItem(item);
+                currentRoom.getAllItems().remove(item);
+                System.out.println("You picked up " + item.getName());
+                return;
+            } else if (item.getName().contains(itemName) && !item.canBePickedUp()) {
+                System.out.println("Too large to pick up");
+                return;
+            }
+        }
+        System.out.println("you cannot pick that up");
+    }
+
+    /**
+     * drops specific item into currentRoom and there by store it in the
+     * itemsInRoom list
+     *
+     * @param command
+     */
+    private void drop(Command command) {
+        if (!command.hasSecondWord()) {
+            // if there is no second word, we don't know where to go...
+            System.out.println("Drop what?");
+            return;
+        }
+        List<Item> items = new ArrayList<>();
+        items = player.getInventory();
+        String itemName = command.getSecondWord().toLowerCase();
+        for (Item item : items) {
+            if (item.getName().toLowerCase().contains(itemName) && item.canBePickedUp()) {
+                player.drop(item);
+                currentRoom.getAllItems().add(item);
+                System.out.println("You dropped " + item.getName());
+                return;
+            }
+        }
+        System.out.println("You do not have that item");
+        
+    }
+
+    /**
+     * tries to prints out inventory if it contains any thing
+     */
+    private void showInventory() {
+        if (player.getInventory() != null) {
+            System.out.println("");
+            System.out.println("your inventory contain:");
+            for (Item item : player.getInventory()) {
+                System.out.println(item.getName());
+            }
+        } else {
+            System.out.println("you a not carring any thing");
+        }
+    }
+
+    /**
      * "Quit" was entered. Check the rest of the command to see whether we
      * really quit the game.
      *
@@ -295,10 +312,28 @@ public class Game {
         }
     }
 
+    //implementation of internal methods
     /**
      * counts how many rooms you have entert
      */
     private void countRooms() {
         roomsEntert++;
+    }
+
+    /**
+     * changes the room and handels alle the process that are desessery for
+     * every thing run properbly sets the room at the start;
+     *
+     * @param nextRoom
+     */
+    private void changeRoom(Room nextRoom) {
+        previusRoom = currentRoom;
+        currentRoom = nextRoom;
+        countRooms();
+        roomHistory.add(nextRoom);
+        System.out.println(seprationLine);
+        System.out.println(currentRoom.getDescription());
+        System.out.println("");
+        System.out.println(currentRoom.getExitString());
     }
 }

@@ -5,37 +5,47 @@
  */
 
 /**
- * all desciptions will have 
+ * all desciptions will have
+ *
  * @author thor1
  */
-public class RoomDesciption{
-    public String roomDesiptionEntry(){
+public class RoomDesciption {
+
+    public String roomDesiptionEntry() {
         return "stand before a giant door";
     }
-    public String roomDesiptionFresko(){
+
+    public String roomDesiptionFresko() {
         return "a in a room with a giant monolithl. "
                 + "the door just closed behind you";
     }
-    public String roomDesiptionHole(){
+
+    public String roomDesiptionHole() {
         return "its a whole";
     }
-    public String roomDesiptionAether(){
+
+    public String roomDesiptionAether() {
         return "you are en aether bla";
     }
-    public String roomDesiptionRelic(){
+
+    public String roomDesiptionRelic() {
         return "you a in the relic room";
     }
-    public String roomDesiptionPool(){
+
+    public String roomDesiptionPool() {
         return "you are in the pool room";
     }
-    public String roomDesiptionStore(){
+
+    public String roomDesiptionStore() {
         return "the store room";
     }
-    public String roomDesiptionEgg(){
+
+    public String roomDesiptionEgg() {
         return "the egg room";
     }
-    public String roomDesiptionStatue(){
+
+    public String roomDesiptionStatue() {
         return "th statue room";
     }
-   
+
 }

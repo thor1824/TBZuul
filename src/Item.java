@@ -8,8 +8,8 @@
  *
  * @author thor1
  */
-public class Item 
-{
+public class Item {
+
     private String name, itemDesciption;
     private double weight;
     private boolean canBePickedUp;
@@ -45,14 +45,16 @@ public class Item
         this.weight = weight;
     }
 
-    public boolean canBePickedUp() {
-        return canBePickedUp;
-    }
-
     public void setCanBePickedUp(boolean canBePickedUp) {
         this.canBePickedUp = canBePickedUp;
     }
-    
-    
-    
+
+    /**
+     * returns true if the item can be pickedup
+     *
+     * @return
+     */
+    public boolean canBePickedUp() {
+        return canBePickedUp;
+    }
 }

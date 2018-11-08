@@ -37,6 +37,11 @@ public class Room {
         itemsInRoom = new ArrayList<>();
     }
 
+    /**
+     * adds an item to item room list
+     * 
+     * @param item 
+     */
     public void addItem(Item item) {
         itemsInRoom.add(item);
     }
@@ -84,6 +89,11 @@ public class Room {
         return description;
     }
     
+    /**
+     * return the list of items in the room
+     * 
+     * @return 
+     */
     public List<Item> getAllItems()
     {
         return itemsInRoom;
@@ -93,6 +103,8 @@ public class Room {
      * Return a long description of this room, of the form: You are in the
      * kitchen. Exits: north west
      *
+     * should be changed to better fit!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     * 
      * @return A description of the room, including exits.
      */
     public String getLongDescription() {
@@ -106,7 +118,7 @@ public class Room {
                 roomItemsDesciption = "you also see " + itemsInRoom.get(i).getItemDesciption() + "\n";
             }
         }
-        return "You " + description + "´\n" + "\n" + roomItemsDesciption + "\n" + getExitString();
+        return "You " + description + "´\n" + roomItemsDesciption + "\n" + getExitString();
 
     }
 

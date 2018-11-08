@@ -30,8 +30,20 @@ public class Player {
         return hunger;
     }
 
+    /**
+     * adds an item to inventory
+     * 
+     * @param i 
+     */
     public void pickUpItem(Item i) {
         inventory.add(i);
     }
-
+    
+    /**
+     * removes an item from inventory
+     */
+    public void drop(Item i)
+    {
+        inventory.remove(i);
+    }
 }
