@@ -24,6 +24,7 @@ public class Game {
     private Room currentRoom, previusRoom;
     private int roomsEntert;
     private List<Room> roomHistory;
+    private Player player;
     private final String seprationLine = "--------------------------------------------------------------------";
 
     /**
@@ -34,6 +35,7 @@ public class Game {
         createRooms();
         parser = new Parser();
         roomsEntert = 0;
+        player = new Player();
     }
 
     /**
@@ -60,7 +62,7 @@ public class Game {
 
         // creates Items 
         // adding new item should be acompanied by a "Item Desciption Method" in the RoomDesciption Class
-        Item dustBucket = new Item("Dust Bucket", "Its a Bucket, just a bucket", 1);
+        Item dustBucket = new Item("Dust Bucket", "Its a Bucket, just a bucket", 1, true);
 
         // adds items to rooms
         entry.addItem(dustBucket);
@@ -143,10 +145,53 @@ public class Game {
             back();
         } else if (commandWord.equals("retrace")) {
             retrace();
+        } else if (commandWord.equals("pickup")) {
+            pickUp(command);
+        } else if (commandWord.equals("inventory")) {
+            showInventory();
         } else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
         }
         return wantToQuit;
+    }
+
+    /**
+     * picks up item and removes it from the "room item list"
+     *
+     * @param command
+     */
+    private void pickUp(Command command) {
+
+        if (!command.hasSecondWord()) {
+            // if there is no second word, we don't know where to go...
+            System.out.println("Pickup What?");
+            return;
+        }
+        List<Item> items = new ArrayList<>();
+        items = currentRoom.getAllItems();
+        String itemName = command.getSecondWord().toLowerCase();
+        for (Item item : items) {
+            if (item.getName().toLowerCase().contains(itemName) && item.canBePickedUp()) {
+                player.pickUpItem(item);
+                currentRoom.getAllItems().remove(item);
+                System.out.println("You picked up " + item.getName());
+                return;
+            } else if (item.getName().contains(itemName) && !item.canBePickedUp()) {
+                System.out.println("Too large to pick up");
+                return;
+            }
+        }
+        System.out.println("you cannot pick that up");
+    }
+
+    private void showInventory() {
+        if (player.getInventory() != null) {
+            System.out.println("");
+            System.out.println("your inventory contain:");
+            for (Item item : player.getInventory()) {
+                System.out.println(item.getName());
+            }
+        }
     }
 
     // implementations of user commands:

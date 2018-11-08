@@ -12,11 +12,13 @@ public class Item
 {
     private String name, itemDesciption;
     private double weight;
+    private boolean canBePickedUp;
 
-    public Item(String name, String itemDesciption, double weight) {
+    public Item(String name, String itemDesciption, double weight, boolean pickability) {
         this.name = name;
         this.itemDesciption = itemDesciption;
         this.weight = weight;
+        this.canBePickedUp = pickability;
     }
 
     public String getName() {
@@ -42,5 +44,15 @@ public class Item
     public void setWeight(double weight) {
         this.weight = weight;
     }
+
+    public boolean canBePickedUp() {
+        return canBePickedUp;
+    }
+
+    public void setCanBePickedUp(boolean canBePickedUp) {
+        this.canBePickedUp = canBePickedUp;
+    }
+    
+    
     
 }

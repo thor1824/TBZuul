@@ -83,6 +83,11 @@ public class Room {
     public String getDescription() {
         return description;
     }
+    
+    public List<Item> getAllItems()
+    {
+        return itemsInRoom;
+    }  
 
     /**
      * Return a long description of this room, of the form: You are in the
@@ -104,5 +109,7 @@ public class Room {
         return "You " + description + "´\n" + "\n" + roomItemsDesciption + "\n" + getExitString();
 
     }
+
+    
 
 }
