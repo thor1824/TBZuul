@@ -128,7 +128,7 @@ public class Game {
         }
 
         String commandWord = command.getCommandWord();
-        if (commandWord.equals("help")) {
+        /*if (commandWord.equals("help")) {
             printHelp();
         } else if (commandWord.equals("go")) {
             goRoom(command);
@@ -148,7 +148,7 @@ public class Game {
             showInventory();
         } else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
-        }
+        }*/
         return wantToQuit;
     }
 
